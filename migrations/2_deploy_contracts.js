@@ -1,5 +1,7 @@
-const Color = artifacts.require("Color");
+const AuctionHouse = artifacts.require("AuctionHouse");
+const NFT = artifacts.require("NFT");
 
 module.exports = function(deployer) {
-  deployer.deploy(Color);
+  deployer.deploy(AuctionHouse);
+  deployer.deploy(NFT, "NFT Auction", "NFTA");
 };

@@ -104,7 +104,6 @@ class App extends Component {
                     placeholder = 'e.g. #FFFFFF'
                     ref = {(input) => {this.color = input}}
                     />
-
                     <input 
                     type = 'submit' 
                     className = 'btn btn-block btn-primary' 
