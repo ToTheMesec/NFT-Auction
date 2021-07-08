@@ -20,12 +20,12 @@ contract AuctionHouse{
         address payable from;
         uint256 amount;
     }
-
+    //optimize slots
     struct Auction{
         string name;
         uint256 blockDeadline;
         uint256 startPrice;
-        string metadata;
+        string metadata;//take out
         uint256 nftId;
         address nftRepositoryAddress;
         address payable owner;

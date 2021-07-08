@@ -4,6 +4,9 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 contract NFT is ERC721URIStorage {
 
+    string[] public nftImages;
+    mapping(string => bool) _nftExists;
+
    constructor(string memory _name, string memory _symbol)  ERC721(_name, _symbol){}
 
     /*
@@ -19,7 +22,11 @@ contract NFT is ERC721URIStorage {
     it uses _mint function of the ERC721 token
     _tokenId will represent an NFT and _uri will contain metadata
     */
-    function registerNFT(uint256 _tokenId, string memory _uri) public {
+    function registerNFT(string memory _uri) public {
+        require(!_nftExists[_uri], "There can't be two same NFTs");
+        uint256 _tokenId = nftImages.length;
+        nftImages.push(_uri);
+        _nftExists[_uri] = true;
        _mint(msg.sender, _tokenId);
        addNFTMetadata(_tokenId, _uri);
        emit NFTRegistered(msg.sender, _tokenId);
@@ -29,6 +36,10 @@ contract NFT is ERC721URIStorage {
     function  addNFTMetadata(uint256 _tokenId, string memory _uri) public returns(bool){
         _setTokenURI(_tokenId, _uri);
         return true;
+    }
+
+    function totalSupply() public view returns (uint){
+        return nftImages.length;
     }
 
 }
