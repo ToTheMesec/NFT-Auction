@@ -24,11 +24,15 @@ contract NFT is ERC721URIStorage {
     */
     function registerNFT(string memory _uri) public {
         require(!_nftExists[_uri], "There can't be two same NFTs");
+
         uint256 _tokenId = nftImages.length;
+
         nftImages.push(_uri);
         _nftExists[_uri] = true;
+
        _mint(msg.sender, _tokenId);
        addNFTMetadata(_tokenId, _uri);
+       
        emit NFTRegistered(msg.sender, _tokenId);
     } 
 
@@ -37,6 +41,8 @@ contract NFT is ERC721URIStorage {
         _setTokenURI(_tokenId, _uri);
         return true;
     }
+
+
 
     function totalSupply() public view returns (uint){
         return nftImages.length;

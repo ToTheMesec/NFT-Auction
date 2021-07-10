@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component} from 'react';
 import Web3 from 'web3';
 import './App.css';
 import NFT from '../abis/NFT.json'
@@ -24,9 +24,10 @@ class App extends Component {
       }
     })
     .then(res => {
-      console.log(res.data.secure_url);
+      console.log(res.data);
       this.setState({
-        urlSlike: res.data.secure_url
+        urlSlike: res.data.secure_url,
+        podaciSlike: res.data
       })
     })
   }
@@ -62,21 +63,24 @@ class App extends Component {
       const address = networkData.address
       const contract = new web3.eth.Contract(abi, address)
       this.setState({contract: contract})
-      console.log(this.state.urlSlike)
+      ///////////////////////////////////////////////////////////////////
+      const total = await contract.methods.totalSupply().call()
+      const mainDiv = document.getElementById('myId')
+      for(var i =0;i<=total;i++){
+        const nft = await contract.methods.nftImages(i).call()//link od slike
+        const _div = document.createElement('div')
+        const image = document.createElement('img')
+        image.src = nft
+        image.classList = "slika"
+        _div.appendChild(image)
+        _div.classList = "token"
+        mainDiv.appendChild(_div)
+        console.log(nft)
+      }
     }else{
       window.alert('Smart contract not deployed to detected network');
     }
   }
-
-  // mint = (color) => {
-  //   console.log(color)
-  //   this.state.contract.methods.mint(color).send({from: this.state.account})
-  //   .once('receipt', (receipt) => {
-  //     this.setState({
-  //       colors: [...this.state.colors, color]
-  //     })
-  //   })
-  // }
 
   registerNFT = (urlSlike) => {
     this.state.contract.methods.registerNFT(urlSlike).send({from: this.state.account})
@@ -91,6 +95,7 @@ class App extends Component {
     super(props)
     this.state = {
       urlSlike: '',
+      podaciSlike: '',
       selectedFile: null,
       account : '',
       contract: null,
@@ -123,6 +128,7 @@ class App extends Component {
                 event.preventDefault()
                 const urlSlike = this.state.urlSlike
                 this.registerNFT(urlSlike)
+                console.log(this.state.podaciSlike.secure_url)
               }}>
                 <input type = "file" onChange={this.fileSelectedHandler} />
                 <button onClick = {this.fileUploadHandler}>UPLOAD</button>
@@ -130,8 +136,9 @@ class App extends Component {
             </main>
           </div>
           <hr/>
-          <div className = "row text-center" style = {{backgroundImage: this.state.urlSlike}}>
-            
+          <div className = "row text-center" style = {{backgroundImage: this.state.urlSlike}} id = "myId">
+          <Image style={{width: "500px", height: "500px"}}cloudName="nftauction" publicId= {this.state.urlSlike}/>
+
           </div>
         </div>
       </div>
