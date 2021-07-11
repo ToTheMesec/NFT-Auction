@@ -102,7 +102,7 @@ class App extends Component {
       ime: '',
       desc: '',
       cena: '',
-      urlSlike: '',
+      urlSlike: 'https://i.imgur.com/pANy2tq.png',
       podaciSlike: '',
       selectedFile: null,
       account : '',
@@ -135,69 +135,76 @@ class App extends Component {
   render() {
     return (
       <div>
-        <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-          <a
-            className="navbar-brand col-sm-3 col-md-2 mr-0"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <p className="logo">NFT Tokens</p>
-          </a>
-          <ul className = "navbar-nav px-3">
+       <header id="header" class="d-flex align-items-center">
+    <div class="container d-flex align-items-center justify-content-between">
+
+      <h1 class="logo"><a href="index.html">TTM</a></h1>
+
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><a class="nav-link scrollto" href="#hero">Home</a></li>
+          <li><a class="nav-link scrollto" href="#about">About</a></li>
+		  <li class="dropdown active"><a href="#marketplace"><span>Marketplace</span> <i class="bi bi-chevron-down"></i></a>
+            <ul>
+              <li><a href="#">Buy</a></li>
+              <li><a href="#">Create</a></li>
+            </ul>
+          </li>
+          <li className = "navbar-nav px-3">
             <li className = "nav-item text-nowrap d-none d-sm-none d-sm-block">
               <small className = "text-white"><span id = "account">{this.state.account}</span></small>
             </li>
-          </ul>
-        </nav>
+          </li>
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+      </nav>
+
+    </div>
+  </header>
         <div className="container-fluid mt-5">
           <div className="row">
             <main role="main" className="col-lg-12 d-flex text-center">
-              <div className="prvi">
+            <div className="prvi">
                 <Image  style={{width: "300px", height: "300px"}}cloudName="nftauction" publicId={this.state.urlSlike}/>
-                <div className="dugmici">
+              <div className="forme">
+                <p className="nftext">NFT Name:</p>
+                <input type="text" name="name" onChange = {evt => this.updateNameValue(evt)}/>
+                <p className="nftext" id="dva">NFT Description:</p>
+                <div className="textarea">
+                <input type="text" onChange ={evt => this.updateDescValue(evt)}></input>
+                </div>
+                <p className="nftext" id="dva">NFT Price (ETH):</p>
+                <div className="numberarea">
+                <input type="number" onChange = {evt => this.updatePriceValue(evt)}></input>
+                </div>
+
+                </div>
+              <div className="dugmici">
               <form onSubmit = {(event) => {
                 event.preventDefault()
                 const urlSlike = this.state.urlSlike
                 this.registerNFT(urlSlike)
-                console.log(this.state.urlSlike)
-                console.log(this.state.ime)
-                console.log(this.state.cena)
-                
-                console.log(this.state.podaciSlike.secure_url)
               }}>
-                <div className="forme">
-                  <p className="nftext">NFT Name:</p>
-                    <input type="text" name="name" onChange={evt => this.updateNameValue(evt)} />
-                  <p className="nftext" id="dva">NFT Description:</p>
-                  <div className="textarea">
-                    <input type="text" onChange={evt => this.updateDescValue(evt)}/>
-                  </div>
-                  <p className="nftext" id="dva">NFT Price (ETH):</p>
-                  <div className="numberarea">
-                    <input type="number" onChange={evt => this.updatePriceValue(evt)}/>
-                  </div>
-                </div>
+                
                 <input id="fileUpload" type = "file" onChange={this.fileSelectedHandler} hidden/>
                 <label htmlFor="fileUpload">Choose File</label>
                 <button onClick = {this.fileUploadHandler}>Upload</button>
+              
               </form>
+
                 </div>
-              </div>
+             </div>
+              
             </main>
           </div>
-          <hr/>
-          <div className = "row text-center" style = {{backgroundImage: this.state.urlSlike}} id = "myId">
-              <div>
-                <Link to="/AuctionH.js" className = "btn btn-primary">hello</Link>
-              </div>
+          <div className = "row text-center" style = {{backgroundImage: this.state.urlSlike}}>
+            
           </div>
         </div>
       </div>
     );
   }
 }
-
-
 export default App;
 
 /*render() {
