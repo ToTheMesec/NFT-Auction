@@ -4,7 +4,15 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 contract NFT is ERC721URIStorage {
 
-    string[] public nftImages;
+    struct Item{
+        string uri;
+        string itemName;
+        string itemDesc;
+        uint256 auctionPrice;
+        uint256 Id;
+    }
+
+    Item[] public nftImages;
     mapping(string => bool) _nftExists;
 
    constructor(string memory _name, string memory _symbol)  ERC721(_name, _symbol){}
@@ -22,13 +30,22 @@ contract NFT is ERC721URIStorage {
     it uses _mint function of the ERC721 token
     _tokenId will represent an NFT and _uri will contain metadata
     */
-    function registerNFT(string memory _uri) public {
+    function registerNFT(string memory _uri, string memory _name, string memory _desc, uint256  _price) public {
         require(!_nftExists[_uri], "There can't be two same NFTs");
 
         uint256 _tokenId = nftImages.length;
 
-        nftImages.push(_uri);
-        _nftExists[_uri] = true;
+        Item memory newItem;
+        newItem.uri = _uri;
+        newItem.itemName = _name;
+        newItem.itemDesc = _desc;
+        newItem.auctionPrice = _price;
+        newItem.Id = _tokenId;
+
+        nftImages.push(newItem);
+
+
+        _nftExists[newItem.uri] = true;
 
        _mint(msg.sender, _tokenId);
        addNFTMetadata(_tokenId, _uri);
@@ -40,6 +57,18 @@ contract NFT is ERC721URIStorage {
     function  addNFTMetadata(uint256 _tokenId, string memory _uri) public returns(bool){
         _setTokenURI(_tokenId, _uri);
         return true;
+    }
+
+    function getUri(uint256 _tokenId) public view returns(string memory){
+        return nftImages[_tokenId].uri;
+    }
+
+    function getName(uint256 _tokenId) public view returns(string memory){
+        return nftImages[_tokenId].itemName;
+    }
+
+    function getDesc(uint256 _tokenId) public view returns(string memory){
+        return nftImages[_tokenId].itemDesc;
     }
 
 

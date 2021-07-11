@@ -1,15 +1,143 @@
 /* Styles go here */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
 .token{
     height: 150px;
     width: 150px;
-    background-color:blue;
-    border: 1px solid black;
-    background-image: "../Ivan-Bjelajac.png";
-    border-radius: 20px;
+    border-radius: 50%;
+    display: inline-block;
+    background-color: black;
 }
 
 .slika{
     height: 150px;
     width: 150px;
     border-radius: 20px;
+}
+
+body {
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+}
+nav {
+    background-color: #000000;
+}
+
+.prvi {
+
+    transform-style:preserve-3d;
+    border-radius: 30px;
+    padding: 0rem 5rem;
+    margin-top: 2rem;
+    box-shadow: 0 20px 20px rgba(0,0,0, 0.2), 0px 0px 50px rgba(0, 0, 0, 0.2);
+
+}
+
+.logo {
+
+    color: #fff;
+    text-shadow:
+            0 0 7px #fff,
+            0 0 10px #fff,
+            0 0 21px #fff,
+            0 0 42px #03f4fc,
+            0 0 82px #03f4fc,
+            0 0 92px #03f4fc,
+            0 0 102px #03f4fc,
+            0 0 151px #03f4fc;
+}
+
+.forme {
+    float:right;
+    margin-top: 4em;
+}
+
+#uploadSlike {
+    visibility: hidden;
+}
+
+
+img {
+    border-radius:15px;
+    margin-top: 1rem;
+    border:2px solid white;
+    outline: none;
+
+}
+
+label {
+    background-color: white;
+    color: rgb(7,6,96);
+    padding: 0.5rem;
+    font-family: sans-serif;
+    border-radius: 0.8rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    margin-bottom: 1rem;
+    border:none;
+    padding: 0.6rem;
+}
+
+button {
+
+    background-color: white;
+    color: rgb(7,6,96);
+    padding: 0.5rem;
+    font-family: sans-serif;
+    border-radius: 0.8rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    margin-bottom: 1rem;
+    border:none;
+    padding: 0.6rem;
+}
+
+.dugmici {
+
+    margin: 2px;
+    padding-right: 280px;
+    margin-left: 90px;
+
+}
+
+.textarea {
+
+    margin-top: 1em;
+}
+
+.nftext {
+
+    color:white;
+    font-size: 21px;
+    text-align: left;
+    font-family: 'Open Sans', sans-serif;
+
+}
+.nftext ~ #dva {
+
+    padding-top: 1em;
+}
+
+input[type=text] {
+    background: transparent;
+    color:white;
+    border: none;
+    border-bottom: 1px solid white;
+}
+
+input[type=text]:focus {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #000000;
+}
+
+input[type=number] {
+    background: transparent;
+    color:white;
+    border: none;
+    border-bottom: 1px solid white;
 }

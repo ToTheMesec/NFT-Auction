@@ -23,10 +23,8 @@ contract AuctionHouse{
     //optimize slots
     struct Auction{
         string name;
-        uint256 blockDeadline;
         uint256 startPrice;
-        string metadata;//take out
-        uint256 nftId;
+        NFT.Item nft;
         address nftRepositoryAddress;
         address payable owner;
         bool active;
@@ -42,8 +40,8 @@ contract AuctionHouse{
 
     //Guarantees that this contract is owner of the given nft
     //_nftAddress 
-    modifier contractIsNFTOwner(address _nftAddress, uint256 _nftId){
-        address nftOwner = NFT(_nftAddress).ownerOf(_nftId);
+    modifier contractIsNFTOwner(address _nftAddress, NFT.Item memory _nft){
+        address nftOwner = NFT(_nftAddress).ownerOf(_nft.Id);
         require(nftOwner == address(this), "This contract doesn't own this NFT");
         _;
     }
@@ -98,15 +96,13 @@ contract AuctionHouse{
     but only if the contract is the owner of the nft
     returns a boolean value so the dev could see whether the auction is created
     */
-    function createAuction(address _nftRepositoryAddress, uint256 _nftId, string memory _auctionTitle, string memory _metadata, uint256 _startPrice, uint _blockDeadline)
-    public contractIsNFTOwner(_nftRepositoryAddress, _nftId) returns(bool){
+    function createAuction(address _nftRepositoryAddress, string memory _auctionTitle, NFT.Item memory _nft, uint256 _startPrice)
+    public contractIsNFTOwner(_nftRepositoryAddress, _nft) returns(bool){
         uint auctionId = auctions.length;
         Auction memory newAuc;
         newAuc.name = _auctionTitle;
-        newAuc.blockDeadline = _blockDeadline;
         newAuc.startPrice = _startPrice;
-        newAuc.metadata = _metadata;
-        newAuc.nftId = _nftId;
+        newAuc.nft = _nft;
         newAuc.nftRepositoryAddress = _nftRepositoryAddress;
         newAuc.owner = payable(msg.sender);
         newAuc.active = true;
@@ -144,7 +140,7 @@ contract AuctionHouse{
         }
 
         //approve and transfer the transaction from this contract to the auction owner
-        if(approveAndTransfer(address(this), myAuction.owner, myAuction.nftRepositoryAddress, myAuction.nftId)){
+        if(approveAndTransfer(address(this), myAuction.owner, myAuction.nftRepositoryAddress, myAuction.nft.Id)){
             auctions[_auctionId].active = false;
             emit CanceledAuction(msg.sender, _auctionId);
         }
@@ -154,9 +150,6 @@ contract AuctionHouse{
     function finalizeAuction(uint _auctionId) public{
         Auction memory myAuction = auctions[_auctionId];
         uint bidsLen = auctionBids[_auctionId].length;
-
-        //if the auction hasn't ended yet just revert
-        if(block.timestamp < myAuction.blockDeadline) revert();
 
         //if there are no bids it cancels the auction
         if(bidsLen == 0){
@@ -169,7 +162,7 @@ contract AuctionHouse{
                 revert();
             }
 
-            if(approveAndTransfer(address(this), lastBid.from, myAuction.nftRepositoryAddress, myAuction.nftId)){
+            if(approveAndTransfer(address(this), lastBid.from, myAuction.nftRepositoryAddress, myAuction.nft.Id)){
                 auctions[_auctionId].active = false;
                 auctions[_auctionId].finalized = true;
                 emit FinalizedAuction(msg.sender, _auctionId);
@@ -183,9 +176,6 @@ contract AuctionHouse{
 
         //owner can't bid on his own auctions
         if(myAuction.owner == msg.sender) revert();
-
-        //can't bid if the auction has expired
-        if(block.timestamp > myAuction.blockDeadline) revert();
 
         uint bidsLen = auctionBids[_auctionId].length;
         uint256 tmpAmount = myAuction.startPrice;

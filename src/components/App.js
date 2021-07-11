@@ -2,8 +2,10 @@ import React, { Component} from 'react';
 import Web3 from 'web3';
 import './App.css';
 import NFT from '../abis/NFT.json'
+import AuctionHouse from '../abis/AuctionHouse.json'
 import axios from 'axios';
 import {Image} from 'cloudinary-react';
+import {Link} from "react-router-dom"
 
 class App extends Component {
 
@@ -59,52 +61,146 @@ class App extends Component {
     const networkData = NFT.networks[networkId]
 
     if(networkData){
-      const abi = NFT.abi
+      const abiNFT = NFT.abi
       const address = networkData.address
-      const contract = new web3.eth.Contract(abi, address)
-      this.setState({contract: contract})
-      ///////////////////////////////////////////////////////////////////
-      const total = await contract.methods.totalSupply().call()
-      const mainDiv = document.getElementById('myId')
-      for(var i =0;i<=total;i++){
-        const nft = await contract.methods.nftImages(i).call()//link od slike
-        const _div = document.createElement('div')
-        const image = document.createElement('img')
-        image.src = nft
-        image.classList = "slika"
-        _div.appendChild(image)
-        _div.classList = "token"
-        mainDiv.appendChild(_div)
-        console.log(nft)
-      }
+      const contractNFT = new web3.eth.Contract(abiNFT, address)
+
+      const abiAuction = AuctionHouse.abi
+      const contractAuction = new web3.eth.Contract(abiAuction, address)
+      this.setState({contractNFT: contractNFT, contractAuction: contractAuction})
+      const num = await contractAuction.methods.getCount().call()
+      console.log("here")
+      console.log(num)
+      console.log(contractNFT.methods)
     }else{
       window.alert('Smart contract not deployed to detected network');
     }
   }
 
   registerNFT = (urlSlike) => {
-    this.state.contract.methods.registerNFT(urlSlike).send({from: this.state.account})
+    this.state.contractNFT.methods.registerNFT(urlSlike, this.state.ime, this.state.desc, this.state.cena).send({from: this.state.account})
     .once('receipt', (receipt) => {
       this.setState({
         nfts: [...this.state.nfts, urlSlike]
       })
     })
   }
+  /*
+  createAuction = () => {
+    console.log(this.state.contractAuction)
+    this.state.contractAuction.methods.createAuction(this.state.account, this.state.ime, 
+    this.state.contractNFT.methods.nftImages(this.state.totalSupply),  this.state.cena).send({from: this.state.account})
+    .once('receipt', (receipt) => {
+      console.log('USPEO SAM DA NAPRAVIM AUKCIJU')
+    })
+  }
+  */
 
   constructor(props){
     super(props)
     this.state = {
+      ime: '',
+      desc: '',
+      cena: '',
       urlSlike: '',
       podaciSlike: '',
       selectedFile: null,
       account : '',
-      contract: null,
+      contractNFT: null,
+      contractAuction: null,
       totalSupply: 0,
       nfts: []
     }
   }
 
+  updateNameValue(evt) {
+    console.log("Stavljamo vrednost imena: " + evt.target.value)
+    this.setState({
+      ime: evt.target.value,
+    });
+  }
+
+  updateDescValue(evt) {
+    this.setState({
+      desc: evt.target.value
+    });
+  }
+
+  updatePriceValue(evt) {
+    this.setState({
+      cena: evt.target.value
+    });
+  }
+
   render() {
+    return (
+      <div>
+        <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+          <a
+            className="navbar-brand col-sm-3 col-md-2 mr-0"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <p className="logo">NFT Tokens</p>
+          </a>
+          <ul className = "navbar-nav px-3">
+            <li className = "nav-item text-nowrap d-none d-sm-none d-sm-block">
+              <small className = "text-white"><span id = "account">{this.state.account}</span></small>
+            </li>
+          </ul>
+        </nav>
+        <div className="container-fluid mt-5">
+          <div className="row">
+            <main role="main" className="col-lg-12 d-flex text-center">
+              <div className="prvi">
+                <Image  style={{width: "300px", height: "300px"}}cloudName="nftauction" publicId={this.state.urlSlike}/>
+                <div className="dugmici">
+              <form onSubmit = {(event) => {
+                event.preventDefault()
+                const urlSlike = this.state.urlSlike
+                this.registerNFT(urlSlike)
+                console.log(this.state.urlSlike)
+                console.log(this.state.ime)
+                console.log(this.state.cena)
+                
+                console.log(this.state.podaciSlike.secure_url)
+              }}>
+                <div className="forme">
+                  <p className="nftext">NFT Name:</p>
+                    <input type="text" name="name" onChange={evt => this.updateNameValue(evt)} />
+                  <p className="nftext" id="dva">NFT Description:</p>
+                  <div className="textarea">
+                    <input type="text" onChange={evt => this.updateDescValue(evt)}/>
+                  </div>
+                  <p className="nftext" id="dva">NFT Price (ETH):</p>
+                  <div className="numberarea">
+                    <input type="number" onChange={evt => this.updatePriceValue(evt)}/>
+                  </div>
+                </div>
+                <input id="fileUpload" type = "file" onChange={this.fileSelectedHandler} hidden/>
+                <label htmlFor="fileUpload">Choose File</label>
+                <button onClick = {this.fileUploadHandler}>Upload</button>
+              </form>
+                </div>
+              </div>
+            </main>
+          </div>
+          <hr/>
+          <div className = "row text-center" style = {{backgroundImage: this.state.urlSlike}} id = "myId">
+              <div>
+                <Link to="/AuctionH.js" className = "btn btn-primary">hello</Link>
+              </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
+
+export default App;
+
+/*render() {
     return (
       <div>
         <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
@@ -144,7 +240,4 @@ class App extends Component {
       </div>
     );
   }
-}
-
-
-export default App;
+ */
