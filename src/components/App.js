@@ -60,6 +60,8 @@ class App extends Component {
     const networkId = await web3.eth.net.getId()
     const networkData = NFT.networks[networkId]
 
+    
+
     if(networkData){
       const abiNFT = NFT.abi
       const address = networkData.address
@@ -68,10 +70,10 @@ class App extends Component {
       const abiAuction = AuctionHouse.abi
       const contractAuction = new web3.eth.Contract(abiAuction, address)
       this.setState({contractNFT: contractNFT, contractAuction: contractAuction})
-      const num = await contractAuction.methods.getCount().call()
-      console.log("here")
-      console.log(num)
-      console.log(contractNFT.methods)
+      const total = await contractNFT.methods.totalSupply().call()
+      this.setState({totalSupply: total})
+
+
     }else{
       window.alert('Smart contract not deployed to detected network');
     }
@@ -165,7 +167,7 @@ class App extends Component {
           <div className="row">
             <main role="main" className="col-lg-12 d-flex text-center">
             <div className="prvi">
-                <Image  style={{width: "300px", height: "300px"}}cloudName="nftauction" publicId={this.state.urlSlike}/>
+                <Image  style={{width: "300px", height: "300px"}}cloudName="nftauction" publicId={this.state.urlSlike} className = "slika"/>
               <div className="forme">
                 <p className="nftext">NFT Name:</p>
                 <input type="text" name="name" onChange = {evt => this.updateNameValue(evt)}/>
@@ -197,8 +199,8 @@ class App extends Component {
               
             </main>
           </div>
-          <div className = "row text-center" style = {{backgroundImage: this.state.urlSlike}}>
-            
+          <div className = "row text-center" style = {{backgroundImage: this.state.urlSlike}} id = "myId">
+            sadasdasd
           </div>
         </div>
       </div>
